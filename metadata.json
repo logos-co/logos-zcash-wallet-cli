@@ -1,0 +1,23 @@
+{
+  "name": "zcash_wallet_cli",
+  "display_name": "Zcash Wallet CLI",
+  "version": "0.1.0",
+  "type": "core",
+  "interface": "cdylib",
+  "concurrency": "multi",
+  "category": "wallet",
+  "description": "Headless Zcash wallet sessions for logosctl: relays to zcash_wallet_backend, takes secrets as @file arguments, and names the configure that admits it.",
+  "author": "Logos Core Team",
+  "main": "zcash_wallet_cli_plugin",
+  "dependencies": ["zcash_wallet_backend"],
+  "include": [],
+  "capabilities": [],
+  "codegen": {
+    "rust": { "crate": "rust-lib", "trait": "ZcashWalletCliModule", "source": "src/glue.rs" }
+  },
+  "nix": {
+    "external_libraries": [],
+    "packages": { "build": [], "runtime": [] },
+    "cmake": { "find_packages": [], "extra_include_dirs": [] }
+  }
+}
