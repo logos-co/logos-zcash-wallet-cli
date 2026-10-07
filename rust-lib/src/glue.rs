@@ -32,6 +32,13 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     fn server_health(&self) -> String;
     fn apply_preset(&self, name: String) -> String;
     fn set_proxy(&self, config_json: String) -> String;
+    /// `request_json`: `{ recipients: [{ address, amount (zatoshis), memo? }] }` or `{ uri }`.
+    fn prepare_send(&self, request_json: String) -> String;
+    fn send_status(&self, request_id: String) -> String;
+    fn list_sends(&self) -> String;
+    /// Needs the approver role; the password is best passed as `@file`.
+    fn approve_send(&self, request_id: String, password: String) -> String;
+    fn cancel_send(&self, request_id: String) -> String;
 
     fn on_context_ready(&self, _ctx: &RustModuleContext) {}
 }
@@ -166,6 +173,26 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
 
     fn set_proxy(&self, config_json: String) -> String {
         custodian(modules().zcash_wallet_backend.set_proxy(&config_json))
+    }
+
+    fn prepare_send(&self, request_json: String) -> String {
+        read(modules().zcash_wallet_backend.prepare_send(&request_json))
+    }
+
+    fn send_status(&self, request_id: String) -> String {
+        read(modules().zcash_wallet_backend.send_status(&request_id))
+    }
+
+    fn list_sends(&self) -> String {
+        read(modules().zcash_wallet_backend.list_sends())
+    }
+
+    fn approve_send(&self, request_id: String, mut password: String) -> String {
+        relay_as(with_secret(&mut password, |pw| modules().zcash_wallet_backend.approve_send(&request_id, pw)), "approver")
+    }
+
+    fn cancel_send(&self, request_id: String) -> String {
+        relay_as(modules().zcash_wallet_backend.cancel_send(&request_id), "approver")
     }
 }
 
