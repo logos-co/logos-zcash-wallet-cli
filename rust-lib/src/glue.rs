@@ -34,6 +34,9 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     fn server_health(&self) -> String;
     fn apply_preset(&self, name: String) -> String;
     fn set_proxy(&self, config_json: String) -> String;
+    /// A JSON array of `{ id, url, operator, label?, enabled, classes? }`; needs the custodian role.
+    fn set_servers(&self, list_json: String) -> String;
+    fn clear_suspect(&self, server_id: String) -> String;
     /// `request_json`: `{ recipients: [{ address, amount (zatoshis), memo? }] }` or `{ uri }`.
     fn prepare_send(&self, request_json: String) -> String;
     fn send_status(&self, request_id: String) -> String;
@@ -191,6 +194,14 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
 
     fn set_proxy(&self, config_json: String) -> String {
         custodian(modules().zcash_wallet_backend.set_proxy(&config_json))
+    }
+
+    fn set_servers(&self, list_json: String) -> String {
+        custodian(modules().zcash_wallet_backend.set_servers(&list_json))
+    }
+
+    fn clear_suspect(&self, server_id: String) -> String {
+        custodian(modules().zcash_wallet_backend.clear_suspect(&server_id))
     }
 
     fn prepare_send(&self, request_json: String) -> String {
