@@ -41,6 +41,13 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     fn approve_send(&self, request_id: String, password: String) -> String;
     fn cancel_send(&self, request_id: String) -> String;
     fn prepare_shielding(&self, address: String) -> String;
+    fn migration_status(&self) -> String;
+    fn prepare_migration(&self) -> String;
+    /// Needs the approver role; the password is best passed as `@file`.
+    fn approve_migration(&self, plan_id: String, digest: String, password: String) -> String;
+    fn pause_migration(&self) -> String;
+    fn resume_migration(&self) -> String;
+    fn cancel_migration(&self) -> String;
 
     fn on_context_ready(&self, _ctx: &RustModuleContext) {}
 }
@@ -203,6 +210,33 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
 
     fn prepare_shielding(&self, address: String) -> String {
         custodian(modules().zcash_wallet_backend.prepare_shielding(&address))
+    }
+
+    fn migration_status(&self) -> String {
+        read(modules().zcash_wallet_backend.migration_status())
+    }
+
+    fn prepare_migration(&self) -> String {
+        custodian(modules().zcash_wallet_backend.prepare_migration())
+    }
+
+    fn approve_migration(&self, plan_id: String, digest: String, mut password: String) -> String {
+        relay_as(
+            with_secret(&mut password, |pw| modules().zcash_wallet_backend.approve_migration(&plan_id, &digest, pw)),
+            "approver",
+        )
+    }
+
+    fn pause_migration(&self) -> String {
+        custodian(modules().zcash_wallet_backend.pause_migration())
+    }
+
+    fn resume_migration(&self) -> String {
+        custodian(modules().zcash_wallet_backend.resume_migration())
+    }
+
+    fn cancel_migration(&self) -> String {
+        custodian(modules().zcash_wallet_backend.cancel_migration())
     }
 }
 
