@@ -4,7 +4,7 @@
   inputs = {
     logos-module-builder.url = "github:logos-co/logos-module-builder";
     zcash_wallet_backend = {
-      url = "git+file:///Users/dlipicar/repos/logos-zcash-wallet-backend";
+      url = "github:logos-co/logos-zcash-wallet-backend";
       inputs.logos-module-builder.follows = "logos-module-builder";
     };
   };
