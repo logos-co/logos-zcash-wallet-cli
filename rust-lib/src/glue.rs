@@ -37,6 +37,9 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     /// A JSON array of `{ id, url, operator, label?, enabled, classes? }`; needs the custodian role.
     fn set_servers(&self, list_json: String) -> String;
     fn clear_suspect(&self, server_id: String) -> String;
+    /// Reads from the local node over IPC, broadcasts over Tor; needs the custodian role.
+    fn set_local_node(&self, enabled: bool) -> String;
+    fn local_node(&self) -> String;
     /// `request_json`: `{ recipients: [{ address, amount (zatoshis), memo? }] }` or `{ uri }`.
     fn prepare_send(&self, request_json: String) -> String;
     fn send_status(&self, request_id: String) -> String;
@@ -202,6 +205,14 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
 
     fn clear_suspect(&self, server_id: String) -> String {
         custodian(modules().zcash_wallet_backend.clear_suspect(&server_id))
+    }
+
+    fn set_local_node(&self, enabled: bool) -> String {
+        custodian(modules().zcash_wallet_backend.set_local_node(enabled))
+    }
+
+    fn local_node(&self) -> String {
+        read(modules().zcash_wallet_backend.local_node())
     }
 
     fn prepare_send(&self, request_json: String) -> String {
