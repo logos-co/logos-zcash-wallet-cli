@@ -49,7 +49,9 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     fn cancel_send(&self, request_id: String) -> String;
     fn prepare_shielding(&self, address: String) -> String;
     fn migration_status(&self) -> String;
-    fn prepare_migration(&self) -> String;
+    /// `choice` is "private", the ZIP 318 run, or "now": every Orchard note in one
+    /// transaction, the whole amount public, then reviewed and approved like a send.
+    fn prepare_migration(&self, choice: String) -> String;
     /// Needs the approver role; the password is best passed as `@file`.
     fn approve_migration(&self, plan_id: String, digest: String, password: String) -> String;
     fn pause_migration(&self) -> String;
@@ -243,8 +245,8 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
         read(modules().zcash_wallet_backend.migration_status())
     }
 
-    fn prepare_migration(&self) -> String {
-        custodian(modules().zcash_wallet_backend.prepare_migration())
+    fn prepare_migration(&self, choice: String) -> String {
+        custodian(modules().zcash_wallet_backend.prepare_migration(&choice))
     }
 
     fn approve_migration(&self, plan_id: String, digest: String, mut password: String) -> String {
