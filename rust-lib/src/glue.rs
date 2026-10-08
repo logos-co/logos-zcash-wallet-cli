@@ -39,6 +39,7 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     /// Needs the approver role; the password is best passed as `@file`.
     fn approve_send(&self, request_id: String, password: String) -> String;
     fn cancel_send(&self, request_id: String) -> String;
+    fn prepare_shielding(&self, address: String) -> String;
 
     fn on_context_ready(&self, _ctx: &RustModuleContext) {}
 }
@@ -193,6 +194,10 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
 
     fn cancel_send(&self, request_id: String) -> String {
         relay_as(modules().zcash_wallet_backend.cancel_send(&request_id), "approver")
+    }
+
+    fn prepare_shielding(&self, address: String) -> String {
+        custodian(modules().zcash_wallet_backend.prepare_shielding(&address))
     }
 }
 
