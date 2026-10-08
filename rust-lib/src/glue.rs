@@ -28,6 +28,7 @@ pub trait ZcashWalletCliModule: Send + Sync + 'static {
     fn balances(&self) -> String;
     fn receive_info(&self) -> String;
     fn address_new(&self) -> String;
+    fn history(&self, page: i64) -> String;
     fn servers(&self) -> String;
     fn server_health(&self) -> String;
     fn apply_preset(&self, name: String) -> String;
@@ -158,6 +159,10 @@ impl ZcashWalletCliModule for ZcashWalletCliModuleImpl {
 
     fn address_new(&self) -> String {
         custodian(modules().zcash_wallet_backend.new_address())
+    }
+
+    fn history(&self, page: i64) -> String {
+        read(modules().zcash_wallet_backend.history(page))
     }
 
     fn servers(&self) -> String {
