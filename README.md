@@ -16,11 +16,18 @@ Pass passwords and recovery phrases as `@file` arguments, never on the command l
 The module scrubs them after relaying. Note that `logosctl watch zcash_wallet_cli` with no
 filter publishes every method reply as an event, including `reveal_seed`'s.
 
+## Use Tor for
+
+`set_tor_use` takes `all`, `identifying` (sync and tips direct, lookups and sends over Tor) or
+`none`, for every network, and only while no wallet is open; `tor_use` reads it. `set_proxy`
+picks the Tor that `all` and `identifying` use: the built-in one, or your own SOCKS proxy.
+
 ## A session
 
 ```bash
 logosctl module load zcash_wallet_cli
 logosctl call zcash_wallet_cli set_active_network testnet
+logosctl call zcash_wallet_cli set_tor_use identifying
 logosctl call zcash_wallet_cli set_proxy '{"proxy":"socks5h://127.0.0.1:9050","proxyRequired":true}'
 logosctl call zcash_wallet_cli open_wallet main @password.txt
 logosctl call zcash_wallet_cli job_status b1
