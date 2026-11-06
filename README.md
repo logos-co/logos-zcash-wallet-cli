@@ -19,7 +19,8 @@ filter publishes every method reply as an event, including `reveal_seed`'s.
 ## Use Tor for
 
 `set_tor_use` takes `all`, `identifying` (sync and tips direct, lookups and sends over Tor) or
-`none`, for every network, and only while no wallet is open; `tor_use` reads it. `set_proxy`
+`none` for the active network, and only while no wallet is open; `tor_use` reads it. Each
+network keeps its own. `set_proxy`
 picks the Tor that `all` and `identifying` use: the built-in one, or your own SOCKS proxy.
 
 ## A session
